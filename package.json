@@ -1,0 +1,7 @@
+{
+  "name": "aaa",
+  "version": "1.0.0",
+  "dependencies": {
+    "mysql2": "^3.4.2"
+  }
+}
