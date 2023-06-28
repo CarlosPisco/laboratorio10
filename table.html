@@ -25,7 +25,7 @@
 
 <h1>Juego de la memoria</h1>
 
-<b>Total de imágenes seleccionadas: </b> <br>
+<b>Total de imágenes seleccionadas: <p id="zzz"></p> </b> <br>
 
 <div>
     <label for="files">Select multiple files: </label>
@@ -44,6 +44,15 @@
             var filesInput = document.getElementById("files");
             var files = filesInput.files;
             var output = document.getElementById("result");
+
+
+
+            var archivos = document.getElementById("zzz");
+
+            archivos.innerHTML = files.length;
+
+
+
             const elements = document.getElementsByClassName("thumbnail");
             while(elements.length > 0){
                 elements[0].parentNode.removeChild(elements[0]);
@@ -51,16 +60,23 @@
             for(var i = 0; i< files.length; i++)
             {
                 var file = files[i];
+
                 //Only pics
                 if(!file.type.match('image'))
                     continue;
+
                 var picReader = new FileReader();
+
                 picReader.addEventListener("load",function(event){
+
                     var picFile = event.target;
+
                     var div = document.createElement("div");
                     div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'/>";
                     output.insertBefore(div,null);
+
                 });
+
                 //Read the image
                 picReader.readAsDataURL(file);
             }
@@ -72,6 +88,11 @@
             }
         });
     }
+
+
+
+
+
 </script>
 
 
