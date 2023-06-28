@@ -32,7 +32,6 @@
     <input id="files" type="file" multiple/>
     <output id="result" />
     <button type="button" class="btn btn-success" id="addImages">Agregar Imagenes</button>
-
 </div>
 
 
@@ -41,7 +40,6 @@
 <script>
     window.onload = function(){
         var boton = document.getElementById("addImages");
-
         boton.addEventListener("click", function(){
             var filesInput = document.getElementById("files");
             var files = filesInput.files;
@@ -55,6 +53,10 @@
 
 
 
+            const elements = document.getElementsByClassName("thumbnail");
+            while(elements.length > 0){
+                elements[0].parentNode.removeChild(elements[0]);
+            }
             for(var i = 0; i< files.length; i++)
             {
                 var file = files[i];
@@ -70,10 +72,7 @@
                     var picFile = event.target;
 
                     var div = document.createElement("div");
-
-                    div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'" +
-                        "title='" + picFile.name + "'/>";
-
+                    div.innerHTML = "<img class='thumbnail' src='" + picFile.result + "'/>";
                     output.insertBefore(div,null);
 
                 });
@@ -81,7 +80,12 @@
                 //Read the image
                 picReader.readAsDataURL(file);
             }
-
+            const elementos = document.getElementsByClassName("thumbnail");
+            for(var j = 0; j< elementos.length; j++){
+                var wea = elements[j];
+                console.log(j);
+                wea.attr('id',j);
+            }
         });
 
 
@@ -90,8 +94,6 @@
             alert("Se han seleccionado mas de 15 imagenes");
         }
     }
-
-
 
 
 
