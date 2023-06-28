@@ -25,7 +25,7 @@
 
 <h1>Juego de la memoria</h1>
 
-<b>Total de imágenes seleccionadas: </b> <br>
+<b>Total de imágenes seleccionadas: <p id="zzz"></p> </b> <br>
 
 <div>
     <label for="files">Select multiple files: </label>
@@ -46,6 +46,14 @@
             var filesInput = document.getElementById("files");
             var files = filesInput.files;
             var output = document.getElementById("result");
+
+
+
+            var archivos = document.getElementById("zzz");
+
+            archivos.innerHTML = files.length;
+
+
 
             for(var i = 0; i< files.length; i++)
             {
@@ -75,7 +83,11 @@
             }
 
         });
+
+
     }
+
+
 
 
 
