@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+</head>
+<body>
+  <div id='photos'></div>
+
+ <script>
+
+   let pokemonesPar = ['Aerodactyl.png', 'Articuno.png', 'Bellsprout.png', 'Chansey.png']
+   let pokemonesImpar = ['Aerodactyl.png', 'Articuno.png', 'Bellsprout.png']
+
+   function createTable(lista){
+
+     var listaCompleta = lista.concat(lista);
+
+     var numImagenes = listaCompleta.length
+       var sep = 1
+       var filas = 0
+       var columnas = 0
+
+
+
+     if(Number.isInteger(Math.sqrt(numImagenes))){
+         columnas = Math.sqrt(numImagenes)
+         filas = columnas
+       let table = document.createElement('table');
+       for(let i = 0; i < filas; ++i) {
+         let row = table.insertRow();
+         for(let j = 0; j < columnas; ++j) {
+           let td = row.insertCell();
+           let img = document.createElement('img');
+           img.setAttribute('src', listaCompleta[i]);
+           td.appendChild(img);
+         }
+       }
+       document.getElementById('photos').appendChild(table);
+     }else {
+
+         while (sep === 1){
+             for(let i=1 ; i< numImagenes/2; ++ i){
+                 var b = i + 1
+                 if (i * b === numImagenes){
+                     filas = i
+                     columnas = b
+                     break;
+                 }
+             }
+             sep = 0
+         }
+
+       let table = document.createElement('table');
+       for(let i = 0; i < filas; ++i) {
+         let row = table.insertRow();
+         for(let j = 0; j < columnas; ++j) {
+           let td = row.insertCell();
+           let img = document.createElement('img');
+           img.setAttribute('src', listaCompleta[i]);
+           td.appendChild(img);
+         }
+       }
+       document.getElementById('photos').appendChild(table);
+     }
+   }
+
+   createTable(pokemonesPar);
+
+ </script>
+
+</body>
+
+
+
+</html>
