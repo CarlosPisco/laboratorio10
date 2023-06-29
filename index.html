@@ -284,7 +284,7 @@
 
 
 
-  const displayImages = (images) => {
+  /*const displayImages = (images) => {
     images.sort(_ => Math.random() - 0.5);
     const imageHTML = images.map((image, index) => {
       const cardId = index + 1; // Genera un ID único para cada tarjeta
@@ -300,11 +300,44 @@
     }).join('');
 
     game.innerHTML = imageHTML;
-  }
-  /*#game {
-      display: flex;
-      flex-wrap: wrap;
-    }*/
+  }*/
+
+      const displayImages = (images) => {
+        images.sort(_ => Math.random() - 0.5);
+        const cardIdMap = {}; // Objeto para mapear imageSrc a cardId
+        let currentCardId = 1; // ID de tarjeta actual
+
+        const imageHTML = images.map((image) => {
+          let cardId;
+          if (cardIdMap.hasOwnProperty(image)) {
+            // Si la imagen ya existe en el objeto cardIdMap, asigna su cardId correspondiente
+            cardId = cardIdMap[image];
+          } else {
+            // Si la imagen es nueva, asigna un nuevo cardId y actualiza el objeto cardIdMap
+            cardId = currentCardId;
+            cardIdMap[image] = currentCardId;
+            currentCardId++;
+          }
+
+          return `
+      <div class="card" data-card-id="${cardId}" onclick="clickCard(event)">
+        <div class="front"></div>
+        <div class="back rotated">
+          <img src="${image}" alt="Imagen" />
+        </div>
+      </div>
+    `;
+        }).join('');
+
+        game.innerHTML = imageHTML;
+      };
+
+
+
+      /*#game {
+          display: flex;
+          flex-wrap: wrap;
+        }*/
 
 
   const clickCard = async (e) => {
@@ -480,8 +513,10 @@
         }
 
         // Voltea la tarjeta
+        //Tbm debe voltear la pareja
         const [front, back] = getFrontAndBackFromCard(card);
         rotateElements([front, back]);
+
       }
 
 
