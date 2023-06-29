@@ -131,6 +131,7 @@
 
 <button type="button" class="btn btn-primary" id="random">Aleatorizar</button>
 <button type="button" class="btn btn-secondary" id="ayuda">Ayuda</button>
+<button class="flip-button" data-target-card="1">Voltear tarjeta</button>
 <div id="game" class="preview-image"></div>
 
 
@@ -285,9 +286,10 @@
 
   const displayImages = (images) => {
     images.sort(_ => Math.random() - 0.5);
-    const imageHTML = images.map(image => {
+    const imageHTML = images.map((image, index) => {
+      const cardId = index + 1; // Genera un ID único para cada tarjeta
       return `
-          <div class="card" onclick="clickCard(event)">
+          <div class="card" onclick="clickCard(event)" data-card-id="${cardId}">
             <div class="front">
             </div>
             <div class="back rotated">
@@ -457,6 +459,30 @@
     }
 
   }
+
+
+      const flipButtons = document.querySelectorAll('.flip-button');
+      flipButtons.forEach(button => {
+        const targetCardId = button.getAttribute('data-target-card');
+        button.addEventListener('click', () => flipCard(targetCardId));
+      });
+
+      function flipCard(cardId) {
+        // Encuentra la tarjeta correspondiente al ID
+        const card = document.querySelector(`.card[data-card-id="${cardId}"]`);
+        if (!card) {
+          console.log('No se encontró la tarjeta correspondiente');
+          return;
+        }
+
+        // Voltea la tarjeta
+        const [front, back] = getFrontAndBackFromCard(card);
+        rotateElements([front, back]);
+      }
+
+
+
+
 
 
 
