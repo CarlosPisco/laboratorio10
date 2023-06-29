@@ -454,6 +454,7 @@
     }
     console.log(notfoundyet);
     displayImages([...notfoundyet, ...notfoundyet]);
+    changeStyle(notfoundyet.length);
   });
       /* document.getElementById('ayuda').addEventListener('click', function() {
          const a = document.querySelector('img[src="img/Beedrill.png"]');
@@ -463,13 +464,16 @@
        });*/
 
 
-  document.getElementById('start-button').addEventListener('click', resetGame);
+  document.getElementById('start-button').addEventListener('click', function (){
+    resetGame();
+    changeStyle(totalImages);
+  });
 
-  function changeStyle(){
+  function changeStyle(images){
     let game1 = document.getElementById('game');
     game1.style.display = 'grid';
     game1.style.gridGap = '10px';
-    switch(totalImages*2) {
+    switch(images*2) {
       case 2:
         game1.style.gridTemplateColumns = 'repeat(1, 160px)';
         game1.style.gridTemplateRows = 'repeat(2, 160px)';
