@@ -124,14 +124,15 @@
 
 <p id="image-count">Imagenes en total: 0</p>
 
+
+<button type="button" class="btn btn-info" id="start-button" onclick="changeStyle()">Iniciar juego</button>
 <button type="button" class="btn btn-success" id="addImages">Agregar Imagenes</button>
-<button type="button" class="btn btn-secondary" id="start-button" onclick="changeStyle()">Iniciar juego</button>
 <input type="file" id="image-upload" multiple>
 <div id="image-preview"></div>
-
+<br>
 <button type="button" class="btn btn-primary" id="random">Aleatorizar</button>
 
-<button class="flip-button" data-target-card="1">Ayuda</button>
+<button id="flip-button" data-target-card="1" class="btn btn-danger">Ayuda</button>
 <div id="game" class="preview-image"></div>
 
 
@@ -498,17 +499,15 @@
   }
 
 
-      const flipButtons = document.querySelectorAll('.flip-button');
+      const flipButton = document.getElementById('flip-button');
       let clickCount = 0;
 
-      flipButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          if (clickCount < 2) {
-            const targetCardId = button.getAttribute('data-target-card');
-            flipCard(targetCardId);
-            clickCount++;
-          }
-        });
+      flipButton.addEventListener('click', () => {
+        if (clickCount < 2) {
+          const targetCardId = flipButton.getAttribute('data-target-card');
+          flipCard(targetCardId);
+          clickCount++;
+        }
       });
 
       function flipCard(cardId) {
