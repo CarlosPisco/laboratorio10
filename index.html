@@ -505,18 +505,18 @@
       });
 
       function flipCard(cardId) {
-        // Encuentra la tarjeta correspondiente al ID
-        const card = document.querySelector(`.card[data-card-id="${cardId}"]`);
-        if (!card) {
-          console.log('No se encontró la tarjeta correspondiente');
+        // Encuentra todas las tarjetas correspondientes al ID
+        const cards = document.querySelectorAll(`.card[data-card-id="${cardId}"]`);
+        if (cards.length === 0) {
+          console.log('No se encontraron tarjetas correspondientes');
           return;
         }
 
-        // Voltea la tarjeta
-        //Tbm debe voltear la pareja
-        const [front, back] = getFrontAndBackFromCard(card);
-        rotateElements([front, back]);
-
+        // Voltea todas las tarjetas encontradas
+        cards.forEach((card) => {
+          const [front, back] = getFrontAndBackFromCard(card);
+          rotateElements([front, back]);
+        });
       }
 
 
