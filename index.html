@@ -361,10 +361,24 @@
     elements.forEach(element => element.classList.toggle('rotated'));
   }
 
-
-       document.getElementById('random').addEventListener('click', function() {
-
-       });
+  document.getElementById('random').addEventListener('click', function() {
+    let notfoundyet=[];
+    let arch=false;
+    for(var i=0; i<loadedImages.length;i++){
+      arch=false;
+      for(var j=0; j<foundImages.length;j++) {
+        if(foundImages[j]===loadedImages[i]){
+          console.log("found");
+          arch=true;
+        }
+      }
+      if(!arch){
+        notfoundyet.push(loadedImages[i]);
+      }
+    }
+    console.log(notfoundyet);
+    displayImages([...notfoundyet, ...notfoundyet]);
+  });
       /* document.getElementById('ayuda').addEventListener('click', function() {
          const a = document.querySelector('img[src="img/Beedrill.png"]');
          const card1 = a.currentTarget;
