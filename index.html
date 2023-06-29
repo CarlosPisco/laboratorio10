@@ -305,7 +305,7 @@
     }*/
 
 
-  const clickCard = (e) => {
+  const clickCard = async (e) => {
     const card = e.currentTarget;
     const [front, back] = getFrontAndBackFromCard(card);
     if (front.classList.contains("rotated") || isPaused) {
@@ -334,7 +334,9 @@
 
         matches++;
         if (matches === totalImages) {
-          console.log("¡GANADOR!");
+          await sleep(500);
+          alert("¡GANADOR!");
+          location.reload();
         }
         firstPick = null;
         isPaused = false;
@@ -346,11 +348,13 @@
 
       }*/
 
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
 
 
 
-
-  const getFrontAndBackFromCard = (card) => {
+      const getFrontAndBackFromCard = (card) => {
     const front = card.querySelector(".front");
     const back = card.querySelector(".back");
     return [front, back];
