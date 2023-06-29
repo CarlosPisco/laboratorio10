@@ -130,8 +130,8 @@
 <div id="image-preview"></div>
 
 <button type="button" class="btn btn-primary" id="random">Aleatorizar</button>
-<button type="button" class="btn btn-secondary" id="ayuda">Ayuda</button>
-<button class="flip-button" data-target-card="1">Voltear tarjeta</button>
+
+<button class="flip-button" data-target-card="1">Ayuda</button>
 <div id="game" class="preview-image"></div>
 
 
@@ -499,25 +499,92 @@
 
 
       const flipButtons = document.querySelectorAll('.flip-button');
+      let clickCount = 0;
+
       flipButtons.forEach(button => {
-        const targetCardId = button.getAttribute('data-target-card');
-        button.addEventListener('click', () => flipCard(targetCardId));
+        button.addEventListener('click', () => {
+          if (clickCount < 2) {
+            const targetCardId = button.getAttribute('data-target-card');
+            flipCard(targetCardId);
+            clickCount++;
+          }
+        });
       });
 
       function flipCard(cardId) {
-        // Encuentra todas las tarjetas correspondientes al ID
-        const cards = document.querySelectorAll(`.card[data-card-id="${cardId}"]`);
+        //not found
+        //-------------------
+        let notfoundyet=[];
+        let arch=false;
+        for(var i=0; i<loadedImages.length;i++){
+          arch=false;
+          for(var j=0; j<foundImages.length;j++) {
+            if(foundImages[j]===loadedImages[i]){
+              console.log("found");
+              arch=true;
+            }
+          }
+          if(!arch){
+            notfoundyet.push(loadedImages[i]);
+          }
+        }
+        //---------------------------
+
+        //notfoundarray -> idcardsarray
+        const cardElements = document.querySelectorAll('.card');
+        const matchingCardIds = [];
+
+        cardElements.forEach(card => {
+          const imgElement = card.querySelector('.back img');
+          const imgSrc = imgElement.getAttribute('src');
+
+          if (notfoundyet.includes(imgSrc)) {
+            const cardId = card.getAttribute('data-card-id');
+            matchingCardIds.push(cardId);
+          }
+        });
+
+        console.log(matchingCardIds);
+        const matchingCardIdsSet = [...new Set(matchingCardIds)];
+        //----------------------------------
+
+
+        //Ayuda para voltear la tarjeta de las no encontradas
+        const firstCardId = matchingCardIdsSet[0];
+
+        const cards = document.querySelectorAll(`.card[data-card-id="${firstCardId}"]`);
+
         if (cards.length === 0) {
-          console.log('No se encontraron tarjetas correspondientes');
-          return;
+          console.log(`No se encontraron tarjetas correspondientes para el data-card-id ${firstCardId}`);
+        } else {
+          cards.forEach((card) => {
+            const [front, back] = getFrontAndBackFromCard(card);
+            rotateElements([front, back]);
+          });
+        }
+      //-----------------------------
+
+
+
+        if (cards.length === 0) {
+          console.log(`No se encontraron tarjetas correspondientes para el data-card-id ${firstCardId}`);
+        } else {
+          const card = cards[0];
+          const imgElement = card.querySelector('.back img');
+          const imgSrc = imgElement.getAttribute('src');
+          foundImages.push(imgSrc);
+          console.log(foundImages);
         }
 
-        // Voltea todas las tarjetas encontradas
-        cards.forEach((card) => {
-          const [front, back] = getFrontAndBackFromCard(card);
-          rotateElements([front, back]);
-        });
+
+        if (clickCount === 2) {
+          // Deshabilitar todos los botones después de dos clics
+          flipButtons.forEach(button => button.disabled = true);
+        }
+
       }
+
+
 
 
 
