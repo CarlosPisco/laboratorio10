@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+        crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+          integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+
+  <title>Juego de la memoria</title>
+  <style>
+    #image-preview {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .preview-image {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    .preview-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .preview-image .delete-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 20px;
+      height: 20px;
+      background-color: #ff0000;
+      color: #fff;
+      border-radius: 50%;
+      text-align: center;
+      cursor: pointer;
+    }
+    .preview-image.show img {
+      display: block;
+    }
+
+    /*#game {
+      display: grid;
+      grid-template-columns: repeat(4, 160px);
+      grid-template-rows: repeat(4, 160px);
+      grid-gap: 10px;
+    }*/
+
+
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      font-family: pokemon;
+      letter-spacing: 5px;
+      gap: 10px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 54px;
+    }
+
+
+    .card {
+      box-shadow: 0 3px 10px rgba(200,200,200, 0.9);
+      border-radius: 10px;
+      position: relative;
+      transform-style: preserve-3d;
+      overflow: hidden;
+    }
+
+    .card > .front, .card > .back {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      backface-visibility: hidden;
+      transition: transform 0.5s;
+    }
+
+    .back>h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .rotated {
+      transform: rotateY(180deg);
+    }
+
+    .front {
+      background-image: url("/back.jpg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: black;
+    }
+
+
+  </style>
+</head>
+<body>
+
+
+<h1>Juego de la memoria</h1>
+
+
+<p id="image-count">Imagenes en total: 0</p>
+
+<button type="button" class="btn btn-success" id="addImages">Agregar Imagenes</button>
+<button type="button" class="btn btn-secondary" id="start-button" onclick="changeStyle()">Iniciar juego</button>
+<input type="file" id="image-upload" multiple>
+<div id="image-preview"></div>
+
+  <button id="ayuda">Ayuda</button>
+  <div id="game" class="preview-image"></div>
+
+
+
+
+
+
+
+<script>
+      //-----
+      var totalImages = 0;
+      let loadedImages = [];
+      let foundImages = [];
+
+
+
+      function removeImage(event) {
+        var imageContainer = event.target.parentNode;
+        var image = imageContainer.querySelector('img');
+        var imageSrc = image.src;
+
+        // Eliminar la imagen del arreglo loadedImages
+        var imageIndex = loadedImages.indexOf(imageSrc);
+        if (imageIndex !== -1) {
+          loadedImages.splice(imageIndex, 1);
+        }
+
+        // Eliminar la imagen del DOM
+        imageContainer.parentNode.removeChild(imageContainer);
+        totalImages--;
+        document.getElementById('image-count').textContent = 'Imagenes en total: ' + totalImages;
+
+        if (totalImages < 15) {
+          document.getElementById('image-upload').disabled = false;
+        }
+
+        if (totalImages === 0) {
+          document.getElementById('start-button').disabled = true;
+        }
+      }
+
+
+
+      document.getElementById('addImages').addEventListener('click', function() {
+        var input = document.getElementById('image-upload');
+        var files = input.files;
+
+        if (totalImages + files.length > 15) {
+          alert('Solo se permiten un máximo de 15 imágenes.');
+          return;
+        }
+
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          var reader = new FileReader();
+
+          reader.onload = function(e) {
+            var imageContainer = document.createElement('div');
+            imageContainer.classList.add('preview-image');
+
+            var deleteButton = document.createElement('div');
+            deleteButton.classList.add('delete-button');
+            deleteButton.textContent = 'x';
+            deleteButton.addEventListener('click', removeImage);
+            //deleteButton.addEventListener('click',loadedImages.filter())
+
+
+            var image = document.createElement('img');
+            image.src = e.target.result;
+
+            imageContainer.appendChild(deleteButton);
+            imageContainer.appendChild(image);
+            document.getElementById('image-preview').appendChild(imageContainer);
+
+            totalImages++;
+            document.getElementById('image-count').textContent = 'Imagenes en total: ' + totalImages;
+
+            if (totalImages >= 2) {
+              document.getElementById('start-button').disabled = false;
+            }
+
+            if (totalImages >= 15) {
+              document.getElementById('image-upload').disabled = true;
+            }
+          };
+
+          reader.readAsDataURL(file);
+        }
+
+
+      });
+
+      //-----
+     // const game = document.getElementById('game');
+      const game = document.getElementById('game');
+      game.style.display = 'grid';
+      game.style.gridGap = '10px';
+      game.style.gridTemplateColumns = 'repeat(5, 160px)';
+      game.style.gridTemplateRows = 'repeat(6, 160px)';
+
+
+
+
+
+
+
+      let firstPick;
+  let isPaused = true;
+  let matches = 0;
+
+
+
+  document.getElementById('image-upload').addEventListener('change', function(event) {
+    const files = event.target.files;
+    const fileCount = files.length;
+
+    for (let i = 0; i < fileCount; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const imageSrc = e.target.result;
+        loadedImages.push(imageSrc);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  });
+
+
+
+
+  const resetGame = async () => {
+
+
+    game.innerHTML = '';
+    isPaused = true;
+    firstPick = null;
+    matches = 0;
+    // Carga tus propias imágenes aquí y añade su ruta y nombre                                                             // 'img/Charmander.png', 'img/arbok.png'
+    //const loadedImages = ['img/abra.png', 'img/Articuno.png', 'img/Beedrill.png', 'img/Caterpie.png', 'img/Chansey.png', 'img/Charizard.png'];
+    displayImages([...loadedImages, ...loadedImages]);
+    isPaused = false;
+
+
+
+  }
+
+
+
+
+  const displayImages = (images) => {
+    images.sort(_ => Math.random() - 0.5);
+    const imageHTML = images.map(image => {
+      return `
+          <div class="card" onclick="clickCard(event)">
+            <div class="front">
+            </div>
+            <div class="back rotated">
+              <img src="${image}" alt="Imagen" />
+            </div>
+          </div>
+        `;
+    }).join('');
+
+    game.innerHTML = imageHTML;
+  }
+  /*#game {
+      display: flex;
+      flex-wrap: wrap;
+    }*/
+
+
+  const clickCard = (e) => {
+    const card = e.currentTarget;
+    const [front, back] = getFrontAndBackFromCard(card);
+    if (front.classList.contains("rotated") || isPaused) {
+      return;
+    }
+    isPaused = true;
+    rotateElements([front, back]);
+    if (!firstPick) {
+      firstPick = card;
+      isPaused = false;
+    } else {
+      const secondImageSrc = card.querySelector('.back img').src;
+      const firstImageSrc = firstPick.querySelector('.back img').src;
+      if (firstImageSrc !== secondImageSrc) {
+        const [firstFront, firstBack] = getFrontAndBackFromCard(firstPick);
+        setTimeout(() => {
+          rotateElements([front, back, firstFront, firstBack]);
+          firstPick = null;
+          isPaused = false;
+        }, 500);
+      } else {
+
+        foundImages.push[firstImageSrc];
+
+        matches++;
+        if (matches === totalImages) {
+          console.log("¡GANADOR!");
+        }
+        firstPick = null;
+        isPaused = false;
+      }
+    }
+  }
+
+      /*document.getElementById('hint').addEventListener('click', function() {
+
+      }*/
+
+
+
+
+
+  const getFrontAndBackFromCard = (card) => {
+    const front = card.querySelector(".front");
+    const back = card.querySelector(".back");
+    return [front, back];
+  }
+
+  const rotateElements = (elements) => {
+    if (typeof elements !== 'object' || !elements.length) return;
+    elements.forEach(element => element.classList.toggle('rotated'));
+  }
+
+
+     /* document.getElementById('ayuda').addEventListener('click', function() {
+        const a = document.querySelector('img[src="img/Beedrill.png"]');
+        const card1 = a.currentTarget;
+        const [front, back] = getFrontAndBackFromCard(card1);
+        rotateElements([front, back]);
+      });*/
+
+
+  document.getElementById('start-button').addEventListener('click', resetGame);
+
+  function changeStyle(){
+    let game1 = document.getElementById('game');
+    game1.style.display = 'grid';
+    game1.style.gridGap = '10px';
+
+    switch(totalImages*2) {
+      case '2':
+        console.log("hola");
+        game1.style.gridTemplateColumns = 'repeat(1, 160px)';
+        game1.style.gridTemplateRows = 'repeat(2, 160px)';
+        break;
+      case '4':
+        game1.style.gridTemplateColumns = 'repeat(2, 160px)';
+        game1.style.gridTemplateRows = 'repeat(2, 160px)';
+        break;
+      case '6':
+        game1.style.gridTemplateColumns = 'repeat(3, 160px)';
+        game1.style.gridTemplateRows = 'repeat(2, 160px)';
+        break;
+      case '8':
+        game1.style.gridTemplateColumns = 'repeat(4, 160px)';
+        game1.style.gridTemplateRows = 'repeat(2, 160px)';
+        break;
+      case '10':
+        game1.style.gridTemplateColumns = 'repeat(5, 160px)';
+        game1.style.gridTemplateRows = 'repeat(2, 160px)';
+        break;
+      case '12':
+        game1.style.gridTemplateColumns = 'repeat(6, 160px)';
+        game1.style.gridTemplateRows = 'repeat(2, 160px)';
+        break;
+      case '14':
+        game1.style.gridTemplateColumns = 'repeat(7, 160px)';
+        game1.style.gridTemplateRows = 'repeat(2, 160px)';
+        break;
+      case '16':
+        game1.style.gridTemplateColumns = 'repeat(4, 160px)';
+        game1.style.gridTemplateRows = 'repeat(4, 160px)';
+        break;
+      case '18':
+        game1.style.gridTemplateColumns = 'repeat(6, 160px)';
+        game1.style.gridTemplateRows = 'repeat(3, 160px)';
+        break;
+      case '20':
+        game1.style.gridTemplateColumns = 'repeat(5, 160px)';
+        game1.style.gridTemplateRows = 'repeat(4, 160px)';
+        break;
+      case '22':
+        game1.style.gridTemplateColumns = 'repeat(6, 160px)';
+        game1.style.gridTemplateRows = 'repeat(4, 160px)';
+        break;
+      case '24':
+        game1.style.gridTemplateColumns = 'repeat(6, 160px)';
+        game1.style.gridTemplateRows = 'repeat(4, 160px)';
+        break;
+      case '26':
+        game1.style.gridTemplateColumns = 'repeat(7, 160px)';
+        game1.style.gridTemplateRows = 'repeat(4, 160px)';
+        break;
+      case '28':
+        game1.style.gridTemplateColumns = 'repeat(7, 160px)';
+        game1.style.gridTemplateRows = 'repeat(4, 160px)';
+        break;
+      case '30':
+        game1.style.gridTemplateColumns = 'repeat(5, 160px)';
+        game1.style.gridTemplateRows = 'repeat(6, 160px)';
+        break;
+    }
+
+  }
+
+
+
+</script>
+</body>
+</html>
